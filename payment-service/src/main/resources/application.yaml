@@ -1,3 +1,35 @@
 spring:
   application:
     name: payment-service
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:payment-db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  flyway:
+    enabled: false
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+    consumer:
+      group-id: orchestrator-group
+      auto-offset-reset: latest
+    topic:
+      orchestrator: orchestrator
+      payment-success: inventory-success
+      payment-fail: inventory-fail
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF
+
+server:
+  port: 8091

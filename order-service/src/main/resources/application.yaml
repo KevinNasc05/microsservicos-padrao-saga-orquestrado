@@ -1,3 +1,26 @@
 spring:
   application:
     name: order-service
+
+  data:
+    mongodb:
+      database: admin
+      uri: ${MONGO_DB_URI:mongodb://admin:123456@localhost:27017}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+    consumer:
+      group-id: order-group
+      auto-offset-reset: latest
+    topic:
+      start-saga: start-saga
+      notify-ending: notify-ending
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF
+
+server:
+  port: 3000
