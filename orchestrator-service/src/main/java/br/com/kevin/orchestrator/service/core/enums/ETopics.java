@@ -1,4 +1,4 @@
-package br.com.kevin.orchestrator.service.enums;
+package br.com.kevin.orchestrator.service.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -17,6 +17,8 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static br.com.kevin.orchestrator.service.core.enums.ETopics.*;
+
 @EnableKafka
 @Configuration
 public class KafkaConfig {
@@ -42,7 +44,7 @@ public class KafkaConfig {
     @Value("${spring.kafka.topic.finish-fail}")
     private String finishFailTopic;
 
-    @Value("${spring.kafka.topic.notify-ending]")
+    @Value("${spring.kafka.topic.notify-ending}")
     private String notifyEndingTopic;
 
     private Map<String, Object> consumerProps() {
@@ -86,23 +88,58 @@ public class KafkaConfig {
     }
 
     @Bean
+    public NewTopic startSagaTopic() {
+        return buildTopic(START_SAGA.getTopic());
+    }
+
+    @Bean
     public NewTopic orchestratorTopic() {
-        return buildTopic(orchestratorTopic);
+        return buildTopic(BASE_ORCHESTRATOR.getTopic());
     }
 
     @Bean
     public NewTopic finishSuccessTopic() {
-        return buildTopic(finishSuccessTopic);
+        return buildTopic(FINISH_SUCCESS.getTopic());
     }
 
     @Bean
     public NewTopic finishFailTopic() {
-        return buildTopic(finishFailTopic);
+        return buildTopic(FINISH_FAIL.getTopic());
+    }
+
+    @Bean
+    public NewTopic productValidationSuccessTopic() {
+        return buildTopic(PRODUCT_VALIDATION_SUCCESS.getTopic());
+    }
+
+    @Bean
+    public NewTopic productValidationFailTopic() {
+        return buildTopic(PRODUCT_VALIDATION_FAIL.getTopic());
+    }
+
+    @Bean
+    public NewTopic paymentSuccessTopic() {
+        return buildTopic(PAYMENT_SUCCESS.getTopic());
+    }
+
+    @Bean
+    public NewTopic paymentFailTopic() {
+        return buildTopic(PAYMENT_FAIL.getTopic());
+    }
+
+    @Bean
+    public NewTopic inventorySuccessTopic() {
+        return buildTopic(INVENTORY_SUCCESS.getTopic());
+    }
+
+    @Bean
+    public NewTopic inventoryFailTopic() {
+        return buildTopic(INVENTORY_FAIL.getTopic());
     }
 
     @Bean
     public NewTopic notifyEndingTopic() {
-        return buildTopic(notifyEndingTopic);
+        return buildTopic(NOTIFY_ENDING.getTopic());
     }
 
 }

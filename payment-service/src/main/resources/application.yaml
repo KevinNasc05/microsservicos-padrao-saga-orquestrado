@@ -22,8 +22,8 @@ spring:
       auto-offset-reset: latest
     topic:
       orchestrator: orchestrator
-      payment-success: inventory-success
-      payment-fail: inventory-fail
+      payment-success: payment-success
+      payment-fail: payment-fail
 
 logging:
   level:
