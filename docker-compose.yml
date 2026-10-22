@@ -1,7 +1,7 @@
 services:
 
   kafka:
-    image: apache/kafka:latest
+    image: apache/kafka:4.2.2
     container_name: kafka
     ports:
       - "9092:9092"
@@ -26,7 +26,7 @@ services:
       - orchestrator-saga
 
   console:
-    image: docker.redpanda.com/redpandadata/console
+    image: docker.redpanda.com/redpandadata/console:v3.12.0
     container_name: redpanda-console
     ports:
       - "8081:8080"
@@ -36,61 +36,69 @@ services:
       CONFIG_FILEPATH: /tmp/config.yml
       CONSOLE_CONFIG_FILE: |
         kafka:
-          brokers: ["kafka:9092"]
+          brokers: ["kafka:29092"]
     networks:
       - orchestrator-saga
     depends_on:
       - kafka
 
   order-db:
-    image: mongo:latest
+    image: mongo:8.0
     container_name: order-db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=123456
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
     ports:
       - "27017:27017"
     networks:
       - orchestrator-saga
 
   product-db:
+    image: postgres:17
     container_name: product-db
-    image: postgres:latest
     environment:
-      POSTGRES_DB: product-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: product-db
     ports:
       - "5432:5432"
     networks:
       - orchestrator-saga
 
   payment-db:
+    image: postgres:17
     container_name: payment-db
-    image: postgres:latest
     environment:
-      POSTGRES_DB: payment-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payment-db
     ports:
       - "5433:5432"
     networks:
       - orchestrator-saga
 
   inventory-db:
+    image: postgres:17
     container_name: inventory-db
-    image: postgres:latest
     environment:
-      POSTGRES_DB: inventory-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inventory-db
     ports:
       - "5434:5432"
     networks:
       - orchestrator-saga
 
-volumes:
-  kafka-data:
+  pgadmin:
+    image: dpage/pgadmin4:9.18.0
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "15432:80"
+    networks:
+      - orchestrator-saga
 
 networks:
   orchestrator-saga:
