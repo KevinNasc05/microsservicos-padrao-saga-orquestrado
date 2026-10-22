@@ -18,7 +18,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
     consumer:
-      group-id: orchestrator-group
+      group-id: payment-group
       auto-offset-reset: latest
     topic:
       orchestrator: orchestrator
