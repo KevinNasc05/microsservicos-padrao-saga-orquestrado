@@ -14,7 +14,7 @@ build_results = {}
 def build_application(app):
     print("Building application {}".format(app))
 
-    result = os.system('cd {} && mvnw.cmd clean package -Dmaven.test.skip=true'.format(app))
+    result = os.system("cd {} && mvnw.cmd clean package \"-Dmaven.test.skip=true\"".format(app))
 
     build_results[app] = result == 0
 

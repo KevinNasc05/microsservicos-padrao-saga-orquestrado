@@ -24,8 +24,14 @@ services:
       KAFKA_NUM_PARTITIONS: 3
     networks:
       - orchestrator-saga
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:29092"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
-  console:
+  redpanda-console:
     image: docker.redpanda.com/redpandadata/console:v3.12.0
     container_name: redpanda-console
     ports:
@@ -40,7 +46,8 @@ services:
     networks:
       - orchestrator-saga
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
   order-db:
     image: mongo:8.0
@@ -59,7 +66,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: product-db
+      POSTGRES_DB: product_db
     ports:
       - "5432:5432"
     networks:
@@ -71,7 +78,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: payment-db
+      POSTGRES_DB: payment_db
     ports:
       - "5433:5432"
     networks:
@@ -83,7 +90,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: inventory-db
+      POSTGRES_DB: inventory_db
     ports:
       - "5434:5432"
     networks:
@@ -91,7 +98,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:9.18.0
-    container_name: pgadmin4
+    container_name: pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -100,6 +107,88 @@ services:
     networks:
       - orchestrator-saga
 
+  order-service:
+    build: "./order-service"
+    container_name: order-service
+    environment:
+      MONGO_DB_USER: admin
+      MONGO_DB_PASSWORD: admin
+      MONGO_DB_HOST: order-db
+      MONGO_DB_PORT: 27017
+      KAFKA_BROKER: kafka:29092
+    ports:
+      - "3000:3000"
+    networks:
+      - orchestrator-saga
+    depends_on:
+      - order-db
+      - kafka
+
+  orchestrator-service:
+    build: "./orchestrator-service"
+    container_name: orchestrator-service
+    environment:
+      KAFKA_BROKER: kafka:29092
+    ports:
+      - "8080:8080"
+    networks:
+      - orchestrator-saga
+    depends_on:
+      - kafka
+
+  product-validation-service:
+    build: "./product-validation-service"
+    container_name: product-validation-service
+    environment:
+      DB_HOST: product-db
+      DB_PORT: 5432
+      DB_NAME: product_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BROKER: kafka:29092
+    ports:
+      - "8090:8090"
+    networks:
+      - orchestrator-saga
+    depends_on:
+      - product-db
+      - kafka
+
+  payment-service:
+    build: "./payment-service"
+    container_name: payment-service
+    environment:
+      DB_HOST: payment-db
+      DB_PORT: 5432
+      DB_NAME: payment_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BROKER: kafka:29092
+    ports:
+      - "8091:8091"
+    networks:
+      - orchestrator-saga
+    depends_on:
+      - kafka
+      - payment-db
+
+  inventory-service:
+    build: "./inventory-service"
+    container_name: inventory-service
+    environment:
+      DB_HOST: inventory-db
+      DB_PORT: 5432
+      DB_NAME: inventory_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BROKER: kafka:29092
+    ports:
+      - "8092:8092"
+    networks:
+      - orchestrator-saga
+    depends_on:
+      - inventory-db
+      - kafka
+
 networks:
   orchestrator-saga:
-    driver: bridge

@@ -5,7 +5,7 @@ spring:
   data:
     mongodb:
       database: admin
-      uri: ${MONGO_DB_URI:mongodb://admin:123456@localhost:27017}
+      uri: mongodb://${MONGO_DB_USER:admin}:${MONGO_DB_PASSWORD:admin}@${MONGO_DB_HOST:localhost}:${MONGO_DB_PORT:27017}
 
   kafka:
     bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
