@@ -7,11 +7,6 @@ spring:
     consumer:
       group-id: orchestrator-group
       auto-offset-reset: latest
-    topic:
-      orchestrator: orchestrator
-      finish-success: finish-success
-      finish-fail: finish-fail
-      notify-ending: notify-ending
 
 logging:
   level:

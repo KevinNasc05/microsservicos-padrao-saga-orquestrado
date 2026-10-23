@@ -35,17 +35,6 @@ public class KafkaConfig {
     @Value("${spring.kafka.consumer.auto-offset-reset}")
     private String autoOffsetReset;
 
-    @Value("${spring.kafka.topic.orchestrator}")
-    private String orchestratorTopic;
-
-    @Value("${spring.kafka.topic.finish-success}")
-    private String finishSuccessTopic;
-
-    @Value("${spring.kafka.topic.finish-fail}")
-    private String finishFailTopic;
-
-    @Value("${spring.kafka.topic.notify-ending}")
-    private String notifyEndingTopic;
 
     private Map<String, Object> consumerProps() {
         var props = new HashMap<String, Object>();
